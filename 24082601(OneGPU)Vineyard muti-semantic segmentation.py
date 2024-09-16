@@ -7,7 +7,7 @@ Created on Wed July 3 16:37:08 2024
 
 print("\n\n")
 print("╔═══════════════════════════╗")
-print("║       START THE CODE12    ║")
+print("║       START THE CODE      ║")
 print("╚═══════════════════════════╝")
 
 ###################  MultiWorkerMirroredStrategy  
@@ -54,7 +54,7 @@ strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 
 scaler = MinMaxScaler()
-root_directory = 'job_24-2024_08_29_15_10_06-segmentation mask 1.1'
+root_directory = 'job_24-2024_08_29_15_10_06-segmentation_mask_1.1'
 patch_size = 1024
 
 ############################################################################
