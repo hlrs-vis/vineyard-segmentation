@@ -28,11 +28,11 @@ Python (3.9.18)
 ## Getting Started
 This repository contain two code files. The main program executes by calling the Unet-model subprogram.
 
-### Directory Struture
+### Directory Structure
 The following is an overview of the key files and folders in this project:
 
 
-### Main Program Workflow
+### Main Program Structure
 
 1. Environment Setup:
 Ensure the current directory is in the system path.
@@ -55,7 +55,6 @@ Similarly, load and crop segmentation masks from the SegmentationClass folder.
 Patchify and process the masks, converting them into usable format for training.
 
 6. Label Encoding:
-
 Convert the RGB values in the masks to integer labels representing different classes (e.g., background, cultivated vineyard, etc.).
 Expand the labels from 3D to 4D for input into the model.
 
@@ -68,7 +67,6 @@ Define a custom Unet model for segmentation using the multi_unet_model function.
 Compile the model with Adam optimizer, combined dice and focal loss, and metrics including accuracy and Jaccard coefficient.
 
 9. Model Training:
-
 Train the model using MultiWorkerMirroredStrategy to distribute the training across multiple workers.
 Set a batch size of 12 and train for 500 epochs.
 
@@ -90,5 +88,7 @@ Save the predicted images along with ground truth and test images in an output_i
 Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
 
 Bhattiprolu, S. (2023). python_for_microscopists. GitHub. https://github.com/bnsreenu/python_for_microscopists/tree/master/228_semantic_segmentation_of_aerial_imagery_using_unet
+
+TensorFlow. (n.d.). Multi-worker training with Keras. TensorFlow. https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras
 
 ### What is Unet model?
