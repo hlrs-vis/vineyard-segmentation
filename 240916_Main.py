@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed July 3 16:37:08 2024
 
@@ -52,7 +51,7 @@ strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 
 scaler = MinMaxScaler()
-root_directory = 'job_24-2024_08_29_15_10_06-segmentation_mask_1.1'
+root_directory = 'Training_Testing_Dataset'
 patch_size = 1024
 
 ############################################################################
