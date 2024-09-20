@@ -6,6 +6,8 @@ Automatic segmentation by cultivation status of vineyards.
 This program is built on the Keras framework and uses drone imagery of vineyards to train a U-Net model for automatically identifying the status of farmland. It utilizes a single GPU as the computation tool, enabling the detection of various conditions, such as cultivated vineyards, abandoned fields, large-scale landslides, and more.
 
 ![Vineyard Segmentation Example](./images/001.png)
+![Vineyard Segmentation Example](./images/002.png)
+![Vineyard Segmentation Example](./images/003.png)
 
 
 ### Build With
