@@ -83,21 +83,21 @@ Necessary libraries are imported, including Keras and TensorFlow modules such as
 This function calculates the Jaccard Coefficient (or Intersection over Union) between true and predicted segmentation masks. It flattens both the true and predicted values and computes their intersection and union, returning the Jaccard score.
 
 3. Model Function: multi_unet_model:
-* Inputs: Takes input dimensions (IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS) and number of output classes (n_classes), defining the shape of the input tensor.
-* Contraction Path (Downsampling):
-    * Several blocks of convolutional layers are defined, with each block consisting of:
-        * A 2D convolution with ReLU activation and kernel initialization.
-        * Dropout layers to avoid overfitting.
-        * Max Pooling layers for downsampling, halving the resolution each time.
-    * The contracting path has five convolutional blocks (c1, c2, c3, c4, c5) with increasing depth, starting from 16 filters and doubling after each layer until 256 filters are reached in the bottleneck (c5).
-* Bottleneck:
-    * The middle layer contains two convolutional layers with 256 filters, followed by a Dropout layer. This is the deepest layer of the UNet model.
-* Expansion Path (Upsampling):
-    * The upsampling path uses Conv2DTranspose layers to upsample the feature maps, concatenating with corresponding layers from the contracting path (i.e., using skip connections).
-    * Convolutional layers follow each upsampling operation to refine the features after each upsampling.
-    * This part mirrors the contracting path, reducing the number of filters symmetrically back down to 16 filters (c6, c7, c8, c9).
-* Output Layer:
-    * A final Conv2D layer with a softmax activation produces the output, generating n_classes segmentation maps, one for each class.
+    * Inputs: Takes input dimensions (IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS) and number of output classes (n_classes), defining the shape of the input tensor.
+    * Contraction Path (Downsampling):
+        * Several blocks of convolutional layers are defined, with each block consisting of:
+            * A 2D convolution with ReLU activation and kernel initialization.
+            * Dropout layers to avoid overfitting.
+            * Max Pooling layers for downsampling, halving the resolution each time.
+        * The contracting path has five convolutional blocks (c1, c2, c3, c4, c5) with increasing depth, starting from 16 filters and doubling after each layer until 256 filters are reached in the bottleneck (c5).
+    * Bottleneck:
+        * The middle layer contains two convolutional layers with 256 filters, followed by a Dropout layer. This is the deepest layer of the UNet model.
+    * Expansion Path (Upsampling):
+        * The upsampling path uses Conv2DTranspose layers to upsample the feature maps, concatenating with corresponding layers from the contracting path (i.e., using skip connections).
+        * Convolutional layers follow each upsampling operation to refine the features after each upsampling.
+        * This part mirrors the contracting path, reducing the number of filters symmetrically back down to 16 filters (c6, c7, c8, c9).
+    * Output Layer:
+        * A final Conv2D layer with a softmax activation produces the output, generating n_classes segmentation maps, one for each class.
 
 4. Model Construction and Return:
     * The input and output layers are defined in the model. The model is built without being compiled, allowing the user to compile it later with custom loss functions and optimizers in the main program.
