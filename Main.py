@@ -4,17 +4,19 @@ Created on Wed July 3 16:37:08 2024
 @author: Ziv
 """
 
+
 print("\n\n")
 print("╔═══════════════════════════╗")
-print("║       START THE CODE      ║")
+print("║       START THE CODE10      ║")
 print("╚═══════════════════════════╝")
 
-###################  MultiWorkerMirroredStrategy  
+
+########################################################################
+# <<MultiWorkerMirroredStrategy Environment Setup>>  
 import json
 import os
 import sys
-os.environ["CUDA_VISIBLE_DEVICES"] = "0" #Specify GPU0 as the GPU to be used.
-# os.environ.pop('TF_CONFIG', None) #Remove the environ. var. "TG_CONFIG". If TG_CONFIG unexist, return None. 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0" #Specify GPU0(The first GPU of the GPUs) as the GPU to be used.
 os.environ["SM_FRAMEWORK"] = "tf.keras" #Specfy the deep learning framework from Amazon SageMaker to Keras.
 
 if '.' not in sys.path:
@@ -22,17 +24,26 @@ if '.' not in sys.path:
   
 import tensorflow as tf
 
+# Set the environment variable 'TF_CONFIG' to configure TensorFlow distributed training.
+# This dictionary describes the cluster setup for distributed TensorFlow.
+
 os.environ['TF_CONFIG'] = json.dumps({
+    # Define the cluster, which contains one or more types of jobs (e.g., 'worker', 'ps').
+    # Here, we only have one worker node, "viscluster80:1111", in the cluster.
     "cluster": {
-        "worker": ["viscluster80:1111"]
+        "worker": ["viscluster80:1111"] # A worker running on host 'viscluster80' at port '1111'.
     },
+    # Specify the task that this particular process will handle.
+    # Here, it's defined as a worker task with index 0, meaning it's the first worker.
     "task": {"type": "worker", "index": 0}
 })
 
 print("TF_CONFIG:", os.getenv("TF_CONFIG"))
-###################  MultiWorkerMirroredStrategy  
+######################################################################## 
 
 
+########################################################################
+# <<Libraries Import>>  
 import cv2
 import numpy as np
 from PIL import Image
@@ -40,21 +51,28 @@ from patchify import patchify
 import segmentation_models as sm 
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
+########################################################################
 
 
-###################  MultiWorkerMirroredStrategy  
-# MultiWorkerMirroredStrategy
+########################################################################
+# <<MultiWorkerMirroredStrategy Environment Setup>>  
+# Create a strategy for distributed training across multiple workers.
+# MultiWorkerMirroredStrategy performs synchronous training, where each worker
+# has its own copy of the model, and gradients are aggregated across all workers
+# to keep the models synchronized. This is useful for scaling training to multiple machines.
 strategy = tf.distribute.MultiWorkerMirroredStrategy()
-# strategy.scope()
-###################  MultiWorkerMirroredStrategy  
+########################################################################
 
 
-
+########################################################################
 scaler = MinMaxScaler()
 root_directory = 'Training_Testing_Dataset'
 patch_size = 1024
+########################################################################
 
-############################################################################
+
+########################################################################
+# <<Image Preprocessing>>  
 """
 <<Patching image for processing>>
 1. Walk through the 'images' & 'masks' files as NumPy array.
@@ -64,7 +82,6 @@ patch_size = 1024
 5. Point out each of the patched-subimage, then scale it to 0~1.
 6. Append each of the afterscaler-patched-subimage into image dataset.
 """
-
 print("\n\n\n----------------Start loading the image.----------------")   
 print("(Start finding image file inside \"JEPGImages folder\")")
 image_dataset = []  
@@ -101,15 +118,11 @@ for path, subdirs, files in os.walk(root_directory): #Use "os.walk" walk through
                         single_patch_img = single_patch_img[0] #Drop the extra unecessary dimension that patchify adds. From (1, 256, 256, 3) to (256, 256, 3)       
                         #6. Append each of the afterscaler-afterpatchify-subimage into image dataset.
                         image_dataset.append(single_patch_img)
-                        
-# image_dataset = np.array(image_dataset) #Make the dispersed array format into 1 array.  
-# import random
-# import numpy as np
-# image_number = random.randint(0, len(image_dataset)) #Here, lengh of image_dataset is 1305 represent 1350 patched images.
-# plt.figure(figsize=(12, 6))
-# plt.subplot(121)
-# plt.imshow(np.reshape(image_dataset[image_number], (patch_size, patch_size, 3))) 
-# plt.show()
+########################################################################
+
+
+########################################################################
+# <<Mask Preprocessing>>  
 print("\n\n\n----------------Start loading the mask-----------")   
 print("(Start finding mask file inside \"SegmentationClass\")")                    
 mask_dataset = []  
@@ -142,35 +155,25 @@ mask_dataset =  np.array(mask_dataset)
 
 import random
 import numpy as np
-image_number = random.randint(0, len(image_dataset)) #Here, lengh of image_dataset is 1305 represent 1350 patched images.
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(np.reshape(image_dataset[image_number], (patch_size, patch_size, 3))) 
-plt.subplot(122)
-plt.imshow(np.reshape(mask_dataset[image_number], (patch_size, patch_size, 3)))
-plt.show()
+import matplotlib.pyplot as plt
+# Number of repetitions, adjust this to control how many times the following preview-code runs.
+num_repeats = 5  # You can change this value to any number you like.
+for _ in range(num_repeats):
+    # Randomly select an image from the dataset.
+    image_number = random.randint(0, len(image_dataset) - 1)  # Note: Index should be len(image_dataset) - 1
+    plt.figure(figsize=(12, 6))
+    # Display the image from image_dataset
+    plt.subplot(121)
+    plt.imshow(np.reshape(image_dataset[image_number], (patch_size, patch_size, 3)))
+    # Display the corresponding mask from mask_dataset
+    plt.subplot(122)
+    plt.imshow(np.reshape(mask_dataset[image_number], (patch_size, patch_size, 3)))
+    plt.show()
+########################################################################
 
-import random
-import numpy as np
-image_number = random.randint(0, len(image_dataset)) #Here, lengh of image_dataset is 1305 represent 1350 patched images.
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(np.reshape(image_dataset[image_number], (patch_size, patch_size, 3))) 
-plt.subplot(122)
-plt.imshow(np.reshape(mask_dataset[image_number], (patch_size, patch_size, 3)))
-plt.show()
 
-import random
-import numpy as np
-image_number = random.randint(0, len(image_dataset)) #Here, lengh of image_dataset is 1305 represent 1350 patched images.
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(np.reshape(image_dataset[image_number], (patch_size, patch_size, 3))) 
-plt.subplot(122)
-plt.imshow(np.reshape(mask_dataset[image_number], (patch_size, patch_size, 3)))
-plt.show()
-
-############################################################################
+########################################################################
+# <<Label Encoding>>  
 """
 <<Convert RGB to Integer>> 
 (RGB to HEX: (Hexadecimel --> base 16), 0-9 --> 0-9, 10-15 --> A-F)
@@ -180,19 +183,6 @@ plt.show()
 4. Expand the array from 3D to 4D for input into model. (e.g. from (1305, 256, 256) to (1305, 256, 256, 1))
 """
 #1. Convert HEX to RGB array of each lebal.
-# Building = '#3C1098'.lstrip('#')
-# Building = np.array(tuple(int(Building[i:i+2], 16) for i in (0, 2, 4))) # 60, 16, 152
-# Land = '#8429F6'.lstrip('#')
-# Land = np.array(tuple(int(Land[i:i+2], 16) for i in (0, 2, 4))) #132, 41, 246
-# Road = '#6EC1E4'.lstrip('#') 
-# Road = np.array(tuple(int(Road[i:i+2], 16) for i in (0, 2, 4))) #110, 193, 228
-# Vegetation =  'FEDD3A'.lstrip('#') 
-# Vegetation = np.array(tuple(int(Vegetation[i:i+2], 16) for i in (0, 2, 4))) #254, 221, 58
-# Water = 'E2A929'.lstrip('#') 
-# Water = np.array(tuple(int(Water[i:i+2], 16) for i in (0, 2, 4))) #226, 169, 41
-# Unlabeled = '#9B9B9B'.lstrip('#') 
-# Unlabeled = np.array(tuple(int(Unlabeled[i:i+2], 16) for i in (0, 2, 4))) #155, 155, 155
-
 background = [0,0,0]
 Cultivated_vindyard = [36,179,83]
 Abanded_cleared_farmland = [245,147,49]
@@ -202,7 +192,6 @@ Not_cultivated_for_several_years = [115,51,128]
 Deterioration_of_walls = [250,50,183]
 Large_scale_landslide = [250,50,83]
 Others = [143,143,143]
-
 #2. Define a function converting each lebal with RGB(0-225) array to an integer. 
 label = single_patch_mask #Dummy label for using below
 def rgb_to_2D_label(label):
@@ -230,35 +219,21 @@ print("Unique labels in label dataset are: ", np.unique(labels))
 
 import random
 import numpy as np
-image_number = random.randint(0, len(image_dataset))
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(image_dataset[image_number])
-plt.subplot(122)
-plt.imshow(labels[image_number][:,:,0])
-plt.show()
+import matplotlib.pyplot as plt
+num_repeats = 5
+for _ in range(num_repeats):
+    image_number = random.randint(0, len(image_dataset) - 1)  
+    plt.figure(figsize=(12, 6))
+    plt.subplot(121)
+    plt.imshow(image_dataset[image_number])
+    plt.subplot(122)
+    plt.imshow(labels[image_number][:, :, 0])
+    plt.show()
+########################################################################
 
-import random
-import numpy as np
-image_number = random.randint(0, len(image_dataset))
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(image_dataset[image_number])
-plt.subplot(122)
-plt.imshow(labels[image_number][:,:,0])
-plt.show()
 
-import random
-import numpy as np
-image_number = random.randint(0, len(image_dataset))
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.imshow(image_dataset[image_number])
-plt.subplot(122)
-plt.imshow(labels[image_number][:,:,0])
-plt.show()
-
-############################################################################
+########################################################################
+# <<Dataset Splitting>>  
 """
 1. Converts the class integers to binary class matrix(OneHotEncoder). (e.g. from (1305, 256, 256, 1) to (1305, 256, 256, 6))
 2. Split the image_dataseet and labels_cat into traing group and testing group.
@@ -273,9 +248,11 @@ X_train = image_dataset[:split_index]
 X_test = image_dataset[split_index:]
 y_train = labels_cat[:split_index]
 y_test = labels_cat[split_index:]
- 
-############################################################################
+########################################################################
 
+
+########################################################################
+# <<Model Compilation>>  
 weights = [0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]
 dice_loss = sm.losses.DiceLoss(class_weights=weights) 
 focal_loss = sm.losses.CategoricalFocalLoss()
@@ -285,13 +262,15 @@ IMG_HEIGHT = X_train.shape[1]
 IMG_WIDTH  = X_train.shape[2]
 IMG_CHANNELS = X_train.shape[3]
 
-from simple_multi_unet_model import multi_unet_model, jacard_coef  
+from unet_model import multi_unet_model, jacard_coef  
 metrics=['accuracy', jacard_coef]
 
 def get_model():
     return multi_unet_model(n_classes=n_classes, IMG_HEIGHT=IMG_HEIGHT, IMG_WIDTH=IMG_WIDTH, IMG_CHANNELS=IMG_CHANNELS)
+########################################################################
 
-###################  MultiWorkerMirroredStrategy  
+########################################################################
+# <<Model Training>>  
 with strategy.scope():
     model = get_model()
     model.compile(optimizer='adam', loss=total_loss, metrics=metrics)
@@ -300,24 +279,31 @@ with strategy.scope():
     history1 = model.fit(X_train, y_train, 
                         batch_size = 12, 
                         verbose=1, 
-                        epochs=500, 
+                        epochs=10, 
                         validation_data=(X_test, y_test), 
                         shuffle=False)
-###################  MultiWorkerMirroredStrategy  
-############################################################################
+########################################################################
 
+
+########################################################################
+# <<Save the trained model>>  
+model_save_path = 'trained_model.h5'
+model.save(model_save_path)
+print(f"Model saved to: {model_save_path}")
+########################################################################
+
+
+########################################################################
+# <<Prediction and Output>>  
 import os
 import matplotlib.pyplot as plt
-
 # Create an output folder
-output_folder = 'output_images090601(batchsize_12)'
+output_folder = 'output_images'
 os.makedirs(output_folder, exist_ok=True)
-
 #IOU
 y_pred=model.predict(X_test)
 y_pred_argmax=np.argmax(y_pred, axis=3)
 y_test_argmax=np.argmax(y_test, axis=3)
-
 # Iterate all the testing image
 for test_img_number in range(len(X_test)):
     # Extract the testing image, real lebal, predictions
@@ -326,7 +312,6 @@ for test_img_number in range(len(X_test)):
     test_img_input = np.expand_dims(test_img, 0)
     prediction = model.predict(test_img_input)
     predicted_img = np.argmax(prediction, axis=3)[0,:,:]
-
     # Show the images and output to the folder
     plt.figure(figsize=(12, 8))
     plt.subplot(231)
@@ -342,7 +327,5 @@ for test_img_number in range(len(X_test)):
     output_path = os.path.join(output_folder, output_filename)
     plt.savefig(output_path)
     plt.close()
-
 print("All images already saved to the output folder:", output_folder)
-
 ############################################################################
