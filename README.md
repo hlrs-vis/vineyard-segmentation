@@ -33,10 +33,22 @@ Python (3.9.18)
 
 
 ## Getting Started
-This repository contain two code files. The main program executes by calling the Unet-model subprogram.
+This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the Recommended User-Ajustable Parameters for implementation, or read the code-by-code overview to learn more about the program's architecture.
 
+### Recommended User-Ajustable Parameters of Main.py
+* Specify the node (line 34, 38)
+* Dataset (line 69)
+* Patch_size (line 70)
+* Labels (line 185~209, 241)
+* Ratio of Training-Testing dataset (line 246)
+* Weight (line 256)
+* Batch_size (line 280)
+* Epoch (line 282)
 
-### Main Program Structure
+### Program Structure
+The program structure will introduce the workflow of the main program and the sub-programs. For a more detailed explanation of the program, please refer to the comments in the code.
+
+#### Main Program Structure
 1. MultiWorkerMirroredStrategy Environment Setup:
 Ensure the current directory is in the system path.
 Set the CUDA_VISIBLE_DEVICES environment variable to specify GPU usage.
@@ -79,7 +91,7 @@ After training, make predictions on the test dataset.
 Save the predicted images along with ground truth and test images in an output_images folder.
 
 
-### Unet-Model Subprogram Workflow
+#### Unet-Model Subprogram Structure
 1. Import Libraries:
 Necessary libraries are imported, including Keras and TensorFlow modules such as Input, Conv2D, MaxPooling2D, UpSampling2D, concatenate, and others from Keras, as well as backend from TensorFlow for custom functions.
 
@@ -106,17 +118,6 @@ This function calculates the Jaccard Coefficient (or Intersection over Union) be
 4. Model Construction and Return:
     * The input and output layers are defined in the model. The model is built without being compiled, allowing the user to compile it later with custom loss functions and optimizers in the main program.
     * The function multi_unet_model returns the constructed UNet model.
-
-
-### Recommended User-Ajustable Parameters of Main.py
-* Dataset (line 69)
-* Patch_size (line 70)
-* Labels (line 185~209, 241)
-* Ratio of Training-Testing dataset (line 246)
-* Weight (line 256)
-* Batch_size (line 280)
-* Epoch (line 282)
-
 
 ## Known Issues
 1. Model Loading Under Development
