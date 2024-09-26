@@ -43,8 +43,9 @@ Python (3.9.18)
     * Random
 
 
-## Getting Started <span style="font-size: smaller;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="#outlines">Back to Outlines</a></span>
+## Getting Started 
 This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the [Program Structure](#program-structure) to learn more about the program's architecture.
+
 [Back to Outlines](#outlines)
 
 ### Recommended User-Ajustable Parameters of Main.py
