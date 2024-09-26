@@ -9,8 +9,18 @@ This program is built on the Keras framework and uses drone imagery of vineyards
 ![Vineyard Segmentation Example](./images/002.png)
 ![Vineyard Segmentation Example](./images/003.png)
 
+## Outlines
 
-### Build With
+* [Build With](#build-with)
+* [Getting Started](#getting-started)
+  * [Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy)
+  * [Program Structure](#program-structure)
+    * [Main Program Structure](#main-program-structure)
+    * [Unet-Model Subprogram Structure](#unet-model-subprogram-structure)
+* [Known Issues](#known-issues)
+* [Reference](#reference)
+
+## Build With
 Python (3.9.18)
 * Deep Learning Framework:
     * TensorFlow (2.17.0)
@@ -33,7 +43,7 @@ Python (3.9.18)
 
 
 ## Getting Started
-This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the Recommended User-Ajustable Parameters[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the code-by-code overview[Program Structure](#program-structure) to learn more about the program's architecture.
+This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the [Program Structure](#program-structure) to learn more about the program's architecture.
 
 ### Recommended User-Ajustable Parameters of Main.py
 * Specify the node (line 34, 38)
