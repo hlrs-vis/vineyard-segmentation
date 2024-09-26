@@ -46,7 +46,7 @@ Python (3.9.18)
 ## Getting Started 
 This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the [Program Structure](#program-structure) to learn more about the program's architecture.
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
 
 ### Recommended User-Ajustable Parameters of Main.py
 * Specify the node (line 34, 38)
@@ -58,7 +58,7 @@ This repository contain two code files. The main program executes by calling the
 * Batch_size (line 280)
 * Epoch (line 282)
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
 
 ### Program Structure
 The program structure will introduce the workflow of the main program and the sub-programs. For a more detailed explanation of the program, please refer to the comments in the code.
@@ -105,7 +105,7 @@ Save the trained model to a file in HDF5 format.
 After training, make predictions on the test dataset.
 Save the predicted images along with ground truth and test images in an output_images folder.
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
 
 #### Unet-Model Subprogram Structure
 1. Import Libraries:
@@ -135,7 +135,7 @@ This function calculates the Jaccard Coefficient (or Intersection over Union) be
     * The input and output layers are defined in the model. The model is built without being compiled, allowing the user to compile it later with custom loss functions and optimizers in the main program.
     * The function multi_unet_model returns the constructed UNet model.
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
 
 ## Known Issues
 1. Model Loading Under Development
@@ -150,7 +150,7 @@ The program successfully utilizes TensorFlow's MultiWorkerMirroredStrategy to sp
 4. Color Discrepancies in Mask Preview and Test Label Images:
 The colors of the mask preview after label encoding, as well as the test label image in the center of the final output, are not yet calibrated. This does not impact the functionality of the program, but the visual representation may appear inconsistent.
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
 
 ## Reference
 Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
@@ -159,4 +159,4 @@ Bhattiprolu, S. (2023). python_for_microscopists. GitHub. https://github.com/bns
 
 TensorFlow. (n.d.). Multi-worker training with Keras. TensorFlow. https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras
 
-[Back to Outlines](#outlines)
+[*Back to Outlines*](#outlines)
