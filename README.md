@@ -20,7 +20,7 @@ This program is built on the Keras framework and uses drone imagery of vineyards
 * [Known Issues](#known-issues)
 * [Reference](#reference)
 
-## Build With           [Back to Outlines](#outlines)
+## Build With;&nbsp;&nbsp;[<small>Back to Outlines</small>](#outlines)
 Python (3.9.18)
 * Deep Learning Framework:
     * TensorFlow (2.17.0)
