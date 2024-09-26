@@ -20,7 +20,7 @@ This program is built on the Keras framework and uses drone imagery of vineyards
 * [Known Issues](#known-issues)
 * [Reference](#reference)
 
-## Build With   
+## Build With           [Back to Outlines](#outlines)
 Python (3.9.18)
 * Deep Learning Framework:
     * TensorFlow (2.17.0)
@@ -40,7 +40,7 @@ Python (3.9.18)
     * OS
     * SYS
     * Random
-[Back to Outlines](#outlines)
+
 
 ## Getting Started
 This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the [Program Structure](#program-structure) to learn more about the program's architecture.
