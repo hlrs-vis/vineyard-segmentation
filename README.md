@@ -42,7 +42,7 @@ Python (3.9.18)
     * SYS
     * Random
 
-<span style="font-size: 0.8em;">*[Back to Outlines](#outlines)*</span>
+<span style="font-size: 0.3em;">*[Back to Outlines](#outlines)*</span>
 
 ## Getting Started 
 This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the [Program Structure](#program-structure) to learn more about the program's architecture.
