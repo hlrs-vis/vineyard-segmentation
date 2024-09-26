@@ -7,7 +7,7 @@ Created on Wed July 3 16:37:08 2024
 
 print("\n\n")
 print("╔═══════════════════════════╗")
-print("║       START THE CODE10      ║")
+print("║       START THE CODE      ║")
 print("╚═══════════════════════════╝")
 
 

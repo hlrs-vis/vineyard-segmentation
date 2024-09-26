@@ -116,6 +116,15 @@ This function calculates the Jaccard Coefficient (or Intersection over Union) be
 * Epoch
 * Training-Testing ratio of dataset
 
+## Known Issues
+1. Model Loading Under Development
+The current version of the program supports dataset loading, training on the dataset, saving trained models, and generating Inferential images. However, the functionality to load pre-trained models and directly utilize them for inference is still under development and not yet fully operational.
+
+2. Memory Overload with Large Datasets
+When dealing with large datasets, there is a potential risk of memory overload during processing, which may result in the program failing to execute as expected. Users are advised to monitor memory usage and consider using smaller datasets or implementing data batching strategies to mitigate this issue.
+
+3. Incomplete Multi-GPU Support with TensorFlow MultiWorkerMirroredStrategy
+The program successfully utilizes TensorFlow's MultiWorkerMirroredStrategy to speed up training on a single node with a single GPU. While multiple GPUs across different nodes can currently communicate and initialize properly, full synchronization and multi-GPU parallelism have not yet been achieved. As a result, multi-node GPU training is not yet fully supported.
 
 ## Reference
 Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
