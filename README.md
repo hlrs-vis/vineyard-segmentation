@@ -33,7 +33,7 @@ Python (3.9.18)
 
 
 ## Getting Started
-This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the Recommended User-Ajustable Parameters for implementation, or read the code-by-code overview to learn more about the program's architecture.
+This repository contain two code files. The main program executes by calling the Unet-model subprogram. You can either go directly to the Recommended User-Ajustable Parameters[Recommended User-Ajustable Parameters of Main.py](#recommended-user-ajustable-parameters-of-mainpy) for implementation, or read the code-by-code overview[Program Structure](#program-structure) to learn more about the program's architecture.
 
 ### Recommended User-Ajustable Parameters of Main.py
 * Specify the node (line 34, 38)
