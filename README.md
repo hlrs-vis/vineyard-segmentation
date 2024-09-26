@@ -126,6 +126,9 @@ When dealing with large datasets, there is a potential risk of memory overload d
 3. Incomplete Multi-GPU Support with TensorFlow MultiWorkerMirroredStrategy
 The program successfully utilizes TensorFlow's MultiWorkerMirroredStrategy to speed up training on a single node with a single GPU. While multiple GPUs across different nodes can currently communicate and initialize properly, full synchronization and multi-GPU parallelism have not yet been achieved. As a result, multi-node GPU training is not yet fully supported.
 
+4. Color Discrepancies in Mask Preview and Test Label Images:
+The colors of the mask preview after label encoding, as well as the test label image in the center of the final output, are not yet calibrated. This does not impact the functionality of the program, but the visual representation may appear inconsistent.
+
 ## Reference
 Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
 
