@@ -108,13 +108,15 @@ This function calculates the Jaccard Coefficient (or Intersection over Union) be
     * The function multi_unet_model returns the constructed UNet model.
 
 
-### Recommended User-Ajustable Parameters
-* Dataset
-* Weight
-* Patch_size
-* Batch_size
-* Epoch
-* Training-Testing ratio of dataset
+### Recommended User-Ajustable Parameters of Main.py
+* Dataset (line 69)
+* Patch_size (line 70)
+* Labels (line 185~209, 241)
+* Ratio of Training-Testing dataset (line 246)
+* Weight (line 256)
+* Batch_size (line 280)
+* Epoch (line 282)
+
 
 ## Known Issues
 1. Model Loading Under Development
