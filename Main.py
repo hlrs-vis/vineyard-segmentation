@@ -206,14 +206,14 @@ for _ in range(num_repeats):
 """
 #1. Convert HEX to RGB array of each lebal.
 background = [0,0,0]
-Cultivated_vindyard = [36,179,83]
-Abanded_cleared_farmland = [245,147,49]
-Cleared_in_2023_but_not_maintained_farmland = [170,240,209]
-Not_maintained_since_2023_fall_farmland = [51,221,255]
-Not_cultivated_for_several_years = [115,51,128]
-Deterioration_of_walls = [250,50,183]
-Large_scale_landslide = [250,50,83]
-Others = [143,143,143]
+Cultivated_vindyard = [230, 25, 75]
+Abanded_cleared_farmland = [60, 180, 75]
+Cleared_in_2023_but_not_maintained_farmland = [255, 225, 25]
+Not_maintained_since_2023_fall_farmland = [67, 99, 216]
+Not_cultivated_for_several_years = [245, 130, 49]
+Stairs = [145, 30, 180]
+Large_scale_landslide = [70, 240, 240]
+Others = [250, 190, 190]
 #2. Define a function converting each lebal with RGB(0-225) array to an integer. 
 label = single_patch_mask #Dummy label for using below
 def rgb_to_2D_label(label):
@@ -224,7 +224,7 @@ def rgb_to_2D_label(label):
     label_seg [np.all(label==Cleared_in_2023_but_not_maintained_farmland,axis=-1)] = 3
     label_seg [np.all(label==Not_maintained_since_2023_fall_farmland,axis=-1)] = 4
     label_seg [np.all(label==Not_cultivated_for_several_years,axis=-1)] = 5
-    label_seg [np.all(label==Deterioration_of_walls,axis=-1)] = 6
+    label_seg [np.all(label==Stairs,axis=-1)] = 6
     label_seg [np.all(label==Large_scale_landslide,axis=-1)] = 7
     label_seg [np.all(label==Others,axis=-1)] = 8
     label_seg = label_seg[:,:,0]  #Just take the first channel, no need for all 3 channels
