@@ -1,0 +1,22 @@
+{
+    "Cluster": {
+        "nodelist": ["viscluster70", "viscluster71"]
+    },
+    "Dataset": {
+        "root_directory": "Training_Testing_Dataset_new",
+        "supported_formats": ["tiff", "tif"],
+        "input_images_path": "images",
+        "input_masks_path": "masks"
+    },
+    "Colormap": {
+        "Bewirtschafteter_Weinberg": [230, 25, 75],
+        "Gerodet_und_gepflegt": [60, 180, 75],
+        "kuerzlich_gerodet_nicht_gepflegt": [255, 225, 25],
+        "nicht_gerodet_wilde_Reben": [67, 99, 216],
+        "seit_Jahren_nicht_bewirtschaftet": [245, 130, 49],
+        "Treppe": [145, 30, 180],
+        "grossflaechiger_Hangrutsch": [70, 240, 240],
+        "Andere": [250, 190, 190],
+        "Nichts": [0, 0, 0]
+    }
+}
