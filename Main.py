@@ -10,6 +10,28 @@ print("╔═══════════════════════�
 print("║       START THE CODE      ║")
 print("╚═══════════════════════════╝")
 
+########################################################################
+# Read config file
+import configparser
+import argparse
+import os
+
+parser = argparse.ArgumentParser(description = "This program should train a net.")
+parser.add_argument("-c", "--config", type=str, required=True, help="Path to config.ini data")
+args = parser.parse_args()
+
+config_path = args.config
+config_file = configparser.ConfigParser()
+config_file.read(config_path)
+
+input_images_path = config_file['Dataset']['input_images_path']
+input_masks_path = config_file['Dataset']['input_masks_path']
+
+# Get the supported formats from the configuration
+supported_formats = config_file.get('Dataset', 'supported_formats').split(', ')
+supported_formats = [f".{ext.upper()}" for ext in supported_formats]
+
+
 
 ########################################################################
 # <<MultiWorkerMirroredStrategy Environment Setup>>  
@@ -83,20 +105,20 @@ patch_size = 1024
 6. Append each of the afterscaler-patched-subimage into image dataset.
 """
 print("\n\n\n----------------Start loading the image.----------------")   
-print("(Start finding image file inside \"JEPGImages folder\")")
+print("(Start finding image file inside ", root_directory,"/", input_images_path)
 image_dataset = []  
 #1. Walk through the 'images' & 'masks' files as NumPy array.
 for path, subdirs, files in os.walk(root_directory): #Use "os.walk" walk through "root_directory" and assigns the value to path, subdirs and fies.
     print("\t","***Current path is:", path)
     dirname = path.split("/")[-1] #Use"os.path.sep" to obtain the sep-symbol of os, and split the path by the sep-symbol(windows uses backslashes), at last get the final element of the splited path. If the path contain forwardslashes, it won't be identified as a sep-symbol.  
     #print("After /, dirname is:", dirname)
-    if "JPEGImages" in path:   #Find all 'images' directories
+    if input_images_path in path:   #Find all 'images' directories
         images = os.listdir(path)  #List of all entries(files and directories) in subdirectory of path and return to "images(list)".
         print("\t!!Found JEPGImages folder!! The subdirectory of path is :", images)
         #2. Enumerate each of the image file.
         for i, image_name in enumerate(images):   #Go through the files name inside the "images(list)", enumerate give each file an index number and file's name(with .jpg) into "image_name" in order.
             print("\t","Enumerate the subdirectory of the current path :",i,image_name)
-            if image_name.endswith(".JPG"):   #Only read jpg images...
+            if any(image_name.upper().endswith(ext) for ext in supported_formats):
                 print("\t","(Images path is:",path+"/"+image_name,")")
                 image = cv2.imread(path+"/"+image_name, 1)  #Read each image at "path+"/"+image_name, 1" as BGR
                 SIZE_X = (image.shape[1]//patch_size)*patch_size #Nearest multiple of 256 = (ImageWidth/256)*256
@@ -129,12 +151,12 @@ mask_dataset = []
 for path, subdirs, files in os.walk(root_directory):
     print("\t","***Current path is:", path)
     dirname = path.split("/")[-1]
-    if "SegmentationClass" in path:   #Find all 'images' directories
+    if input_masks_path in path:   #Find all 'images' directories
         masks = os.listdir(path)  #List of all image names in this subdirectory
-        print("\t!!Found SegmentationClass folder!! The subdirectory of path is :", masks)
+        print("\t!!Found masks folder!! The subdirectory of path is :", masks)
         for i, mask_name in enumerate(masks):  
             print("\t","Enumerate the subdirectory of the current path :",i,mask_name)
-            if mask_name.endswith(".png"):   #Only read png images... (masks in this dataset)
+            if any(mask_name.upper().endswith(ext) for ext in supported_formats):
                 print("\t","(Mask path is:",path+"/"+mask_name,")")
                 mask = cv2.imread(path+"/"+mask_name, 1)  #Read each image as RGB.
                 mask = cv2.cvtColor(mask,cv2.COLOR_BGR2RGB)
