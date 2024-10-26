@@ -24,6 +24,8 @@ args = parser.parse_args()
 with open(args.config, 'r') as config_file:
     config = json.load(config_file)
 
+root_directory=config['Dataset']['root_directory']
+
 input_images_path = config['Dataset']['input_images_path']
 input_masks_path = config['Dataset']['input_masks_path']
 
@@ -87,7 +89,6 @@ strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 ########################################################################
 scaler = MinMaxScaler()
-root_directory = 'Training_Testing_Dataset'
 patch_size = 1024
 ########################################################################
 
