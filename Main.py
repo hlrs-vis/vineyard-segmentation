@@ -15,6 +15,8 @@ print("╚═══════════════════════�
 import json
 import argparse
 import os
+import glob
+import fnmatch
 
 parser = argparse.ArgumentParser(description = "This program should train a net.")
 parser.add_argument("-c", "--config", type=str, required=True, help="Path to config file in json format")
@@ -54,7 +56,7 @@ os.environ['TF_CONFIG'] = json.dumps({
     # Define the cluster, which contains one or more types of jobs (e.g., 'worker', 'ps').
     # Here, we only have one worker node, "viscluster80:1111", in the cluster.
     "cluster": {
-        "worker": ["viscluster80:1111"] # A worker running on host 'viscluster80' at port '1111'.
+        "worker": ["localhost:1111"] # A worker running on host 'viscluster80' at port '1111'.
     },
     # Specify the task that this particular process will handle.
     # Here, it's defined as a worker task with index 0, meaning it's the first worker.
@@ -107,39 +109,41 @@ patch_size = 1024
 print("\n\n\n----------------Start loading the image.----------------")   
 print("(Start finding image file inside ", root_directory,"/", input_images_path)
 image_dataset = []  
-#1. Walk through the 'images' & 'masks' files as NumPy array.
-for path, subdirs, files in os.walk(root_directory): #Use "os.walk" walk through "root_directory" and assigns the value to path, subdirs and fies.
-    print("\t","***Current path is:", path)
-    dirname = path.split("/")[-1] #Use"os.path.sep" to obtain the sep-symbol of os, and split the path by the sep-symbol(windows uses backslashes), at last get the final element of the splited path. If the path contain forwardslashes, it won't be identified as a sep-symbol.  
-    #print("After /, dirname is:", dirname)
-    if input_images_path in path:   #Find all 'images' directories
-        images = os.listdir(path)  #List of all entries(files and directories) in subdirectory of path and return to "images(list)".
-        print("\t!!Found JEPGImages folder!! The subdirectory of path is :", images)
-        #2. Enumerate each of the image file.
-        for i, image_name in enumerate(images):   #Go through the files name inside the "images(list)", enumerate give each file an index number and file's name(with .jpg) into "image_name" in order.
-            print("\t","Enumerate the subdirectory of the current path :",i,image_name)
-            if any(image_name.upper().endswith(ext) for ext in supported_formats):
-                print("\t","(Images path is:",path+"/"+image_name,")")
-                image = cv2.imread(path+"/"+image_name, 1)  #Read each image at "path+"/"+image_name, 1" as BGR
-                SIZE_X = (image.shape[1]//patch_size)*patch_size #Nearest multiple of 256 = (ImageWidth/256)*256
-                SIZE_Y = (image.shape[0]//patch_size)*patch_size #Nearest multiple of 256 = (ImageHeigh/256)*256
-                image = Image.fromarray(image) #"Image.fromarray()" function is to create an image object from NumPy array "image".(NOTICE! it must be capital I here since this fuction is "from PIL import Image")
-                #3. Crop each of the image file's dimension to the mutiple of 256.
-                image = image.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner (0, 0) to right lower (SIZE_X, SIZE_Y).
-                image = np.array(image)    
-                #4. Patchify each of the image.
-                patches_img = patchify(image, (patch_size, patch_size, 3), step= patch_size)  #Use function patchify(Step=256 for 256 patches means no overlap, 3 is RGB) from "image" and return each of the patch to "patches_img".
-                #5. Point out each of the afterpatchify-subimage, then scale it to 0~1.
-                for i in range(patches_img.shape[0]): #The total number of patches on Y-direction(heigh). (SyntaxNote:"variavble.shape[]")
-                    for j in range(patches_img.shape[1]): #The total number of patches on X-direction(width)
-                        #5. Point out each of the afterpatchify-subimage, then scale it to 0~1.
-                        single_patch_img = patches_img[i,j,:,:] #Point out the patch in order and return to single_patch_img. (SyntaxNote:"variable[i,j,:,:]")
-                        reshaped_patch_img = single_patch_img.reshape(-1, single_patch_img.shape[-1])
-                        scaled_patch_img = scaler.fit_transform(reshaped_patch_img)
-                        single_patch_img = scaled_patch_img.reshape(single_patch_img.shape)
-                        single_patch_img = single_patch_img[0] #Drop the extra unecessary dimension that patchify adds. From (1, 256, 256, 3) to (256, 256, 3)       
-                        #6. Append each of the afterscaler-afterpatchify-subimage into image dataset.
-                        image_dataset.append(single_patch_img)
+# Construct the full path to the input masks directory
+full_input_images_path = os.path.join(root_directory, input_images_path)
+
+# Find all files in the specified directory and its subdirectories
+all_files = glob.glob(os.path.join(full_input_images_path, '**', '*'), recursive=True)
+
+# Filter the files based on the supported formats (case insensitive)
+image_files = [f for f in all_files if any(fnmatch.fnmatch(f.upper(), f"*{ext}") for ext in supported_formats)]
+
+# Sort the files by filename
+image_files.sort()
+
+# Process each image file
+for image_path in image_files:
+    print("\t", "Images path is:", image_path)
+    image = cv2.imread(image_path, 1)  # Read each image as BGR
+    SIZE_X = (image.shape[1]//patch_size)*patch_size #Nearest multiple of 256 = (ImageWidth/256)*256
+    SIZE_Y = (image.shape[0]//patch_size)*patch_size #Nearest multiple of 256 = (ImageHeigh/256)*256
+    image = Image.fromarray(image) #"Image.fromarray()" function is to create an image object from NumPy array "image".(NOTICE! it must be capital I here since this fuction is "from PIL import Image")
+    #3. Crop each of the image file's dimension to the mutiple of 256.
+    image = image.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner (0, 0) to right lower (SIZE_X, SIZE_Y).
+    image = np.array(image)    
+    #4. Patchify each of the image.
+    patches_img = patchify(image, (patch_size, patch_size, 3), step= patch_size)  #Use function patchify(Step=256 for 256 patches means no overlap, 3 is RGB) from "image" and return each of the patch to "patches_img".
+    #5. Point out each of the afterpatchify-subimage, then scale it to 0~1.
+    for i in range(patches_img.shape[0]): #The total number of patches on Y-direction(heigh). (SyntaxNote:"variavble.shape[]")
+        for j in range(patches_img.shape[1]): #The total number of patches on X-direction(width)
+            #5. Point out each of the afterpatchify-subimage, then scale it to 0~1.
+            single_patch_img = patches_img[i,j,:,:] #Point out the patch in order and return to single_patch_img. (SyntaxNote:"variable[i,j,:,:]")
+            reshaped_patch_img = single_patch_img.reshape(-1, single_patch_img.shape[-1])
+            scaled_patch_img = scaler.fit_transform(reshaped_patch_img)
+            single_patch_img = scaled_patch_img.reshape(single_patch_img.shape)
+            single_patch_img = single_patch_img[0] #Drop the extra unecessary dimension that patchify adds. From (1, 256, 256, 3) to (256, 256, 3)       
+            #6. Append each of the afterscaler-afterpatchify-subimage into image dataset.
+            image_dataset.append(single_patch_img)
 ########################################################################
 
 
@@ -148,29 +152,33 @@ for path, subdirs, files in os.walk(root_directory): #Use "os.walk" walk through
 print("\n\n\n----------------Start loading the mask-----------")   
 print("(Start finding mask file inside \"SegmentationClass\")")                    
 mask_dataset = []  
-for path, subdirs, files in os.walk(root_directory):
-    print("\t","***Current path is:", path)
-    dirname = path.split("/")[-1]
-    if input_masks_path in path:   #Find all 'images' directories
-        masks = os.listdir(path)  #List of all image names in this subdirectory
-        print("\t!!Found masks folder!! The subdirectory of path is :", masks)
-        for i, mask_name in enumerate(masks):  
-            print("\t","Enumerate the subdirectory of the current path :",i,mask_name)
-            if any(mask_name.upper().endswith(ext) for ext in supported_formats):
-                print("\t","(Mask path is:",path+"/"+mask_name,")")
-                mask = cv2.imread(path+"/"+mask_name, 1)  #Read each image as RGB.
-                mask = cv2.cvtColor(mask,cv2.COLOR_BGR2RGB)
-                SIZE_X = (mask.shape[1]//patch_size)*patch_size #Nearest size divisible by our patch size
-                SIZE_Y = (mask.shape[0]//patch_size)*patch_size #Nearest size divisible by our patch size
-                mask = Image.fromarray(mask)
-                mask = mask.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
-                mask = np.array(mask)        
-                patches_mask = patchify(mask, (patch_size, patch_size, 3), step= patch_size)  #Step=256 for 256 patches means no overlap
-                for i in range(patches_mask.shape[0]):
-                    for j in range(patches_mask.shape[1]):
-                        single_patch_mask = patches_mask[i,j,:,:]
-                        single_patch_mask = single_patch_mask[0] #Drop the extra unecessary dimension that patchify adds.    
-                        mask_dataset.append(single_patch_mask) 
+
+# Construct the full path to the input masks directory
+full_input_masks_path = os.path.join(root_directory, input_masks_path)
+
+# Find all files in the specified directory and its subdirectories
+all_files = glob.glob(os.path.join(full_input_masks_path, '**', '*'), recursive=True)
+
+# Filter the files based on the supported formats (case insensitive)
+mask_files = [f for f in all_files if any(fnmatch.fnmatch(f.upper(), f"*{ext}") for ext in supported_formats)]
+
+
+# Sort the files by filename
+mask_files.sort()
+for mask_path in mask_files:
+    mask = cv2.imread(mask_path, 1)  #Read each image as RGB.
+    mask = cv2.cvtColor(mask,cv2.COLOR_BGR2RGB)
+    SIZE_X = (mask.shape[1]//patch_size)*patch_size #Nearest size divisible by our patch size
+    SIZE_Y = (mask.shape[0]//patch_size)*patch_size #Nearest size divisible by our patch size
+    mask = Image.fromarray(mask)
+    mask = mask.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
+    mask = np.array(mask)        
+    patches_mask = patchify(mask, (patch_size, patch_size, 3), step= patch_size)  #Step=256 for 256 patches means no overlap
+    for i in range(patches_mask.shape[0]):
+        for j in range(patches_mask.shape[1]):
+            single_patch_mask = patches_mask[i,j,:,:]
+            single_patch_mask = single_patch_mask[0] #Drop the extra unecessary dimension that patchify adds.    
+            mask_dataset.append(single_patch_mask) 
                         
 image_dataset = np.array(image_dataset) #Make the dispersed array format into 1 array.  
 mask_dataset =  np.array(mask_dataset)
